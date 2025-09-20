@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lecturas del Sensor IR</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 5px 0; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Lecturas del Sensor IR</h1>
+    <ul id="listaDatos"></ul>
+
+    <script>
+        async function cargarDatos() {
+            try {
+                const response = await fetch('datos.php');
+                const data = await response.json();
+
+                const lista = document.getElementById('listaDatos');
+                lista.innerHTML = ''; // limpiar lista antes de mostrar
+
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.fecha_hora;
+                    lista.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
+            }
+        }
+
+        // Cargar datos inicialmente
+        cargarDatos();
+
+        // Actualizar cada 0.1 segundos
+        setInterval(cargarDatos, 100);
+    </script>
+</body>
+</html>
