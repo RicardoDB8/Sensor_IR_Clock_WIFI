@@ -6,13 +6,26 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: #333; }
-        ul { list-style-type: none; padding: 0; }
-        li { padding: 5px 0; border-bottom: 1px solid #ddd; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
     <h1>Lecturas del Sensor IR</h1>
-    <ul id="listaDatos"></ul>
+    <table id="tablaDatos">
+        <thead>
+            <tr>
+                <th>Fecha / Hora</th>
+                <th>Evento</th>
+                <th>Sensor ID</th>
+                <th>Ubicación</th>
+                <th>Modelo</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
     <script>
         async function cargarDatos() {
@@ -20,13 +33,20 @@
                 const response = await fetch('datos.php');
                 const data = await response.json();
 
-                const lista = document.getElementById('listaDatos');
-                lista.innerHTML = ''; // limpiar lista antes de mostrar
+                const tbody = document.querySelector("#tablaDatos tbody");
+                tbody.innerHTML = ''; // limpiar tabla antes de mostrar
 
                 data.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = item.fecha_hora;
-                    lista.appendChild(li);
+                    const tr = document.createElement('tr');
+
+                    tr.innerHTML = `
+                        <td>${item.fecha_hora}</td>
+                        <td>${item.evento}</td>
+                        <td>${item.sensor_id}</td>
+                        <td>${item.ubicacion}</td>
+                        <td>${item.modelo}</td>
+                    `;
+                    tbody.appendChild(tr);
                 });
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
@@ -36,8 +56,8 @@
         // Cargar datos inicialmente
         cargarDatos();
 
-        // Actualizar cada 0.1 segundos
-        setInterval(cargarDatos, 100);
+        // Actualizar cada 1 segundo
+        setInterval(cargarDatos, 1000);
     </script>
 </body>
 </html>

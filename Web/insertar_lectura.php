@@ -14,16 +14,17 @@ if ($conn->connect_error) {
 }
 
 // Obtener datos del ESP32 (por GET)
-$evento = isset($_GET['evento']) ? $_GET['evento'] : '';
+$evento     = isset($_GET['evento']) ? $_GET['evento'] : '';
 $fecha_hora = isset($_GET['fecha_hora']) ? $_GET['fecha_hora'] : '';
-$sensor_id = isset($_GET['sensor_id']) ? intval($_GET['sensor_id']) : 0;
-$ubicacion = isset($_GET['ubicacion']) ? $_GET['ubicacion'] : '';
+$sensor_id  = isset($_GET['sensor_id']) ? intval($_GET['sensor_id']) : 0;
+$ubicacion  = isset($_GET['ubicacion']) ? $_GET['ubicacion'] : '';
+$modelo     = isset($_GET['modelo']) ? $_GET['modelo'] : ''; // 👈 Nuevo campo
 
 // Validar que no estén vacíos
-if ($evento && $fecha_hora && $sensor_id && $ubicacion) {
-    // Insertar en la base de datos
-    $sql = "INSERT INTO lecturas (evento, fecha_hora, sensor_id, ubicacion)
-            VALUES ('$evento', '$fecha_hora', $sensor_id, '$ubicacion')";
+if ($evento && $fecha_hora && $sensor_id && $ubicacion && $modelo) {
+    // Insertar en la base de datos (incluyendo modelo)
+    $sql = "INSERT INTO lecturas (evento, fecha_hora, sensor_id, ubicacion, modelo)
+            VALUES ('$evento', '$fecha_hora', $sensor_id, '$ubicacion', '$modelo')";
 
     if ($conn->query($sql) === TRUE) {
         echo "✅ Lectura registrada correctamente.";
