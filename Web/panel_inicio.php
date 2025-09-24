@@ -47,8 +47,43 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Configurar Modelo</title>
+    <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between; /* separa izquierda y derecha */
+      align-items: center; /* centra verticalmente */
+      background-color: #f4f4f4;
+      padding: 15px 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .nombre {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .perfil img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%; /* lo hace circular */
+      object-fit: cover;  /* asegura que la imagen no se deforme */
+      border: 2px solid #333;
+    }
+  </style>
 </head>
 <body>
+    <header>
+        <div class="nombre">Cariluma</div>
+        <div class="perfil">
+        <img src="./assets/Mi_Foto.jpg" alt="Foto de perfil">
+        </div>
+    </header>
     <h1>Modelo actual: <?php echo $modelo; ?></h1>
 
     <?php if ($actualizado): ?>
