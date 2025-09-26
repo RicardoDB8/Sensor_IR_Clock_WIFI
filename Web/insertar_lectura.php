@@ -1,36 +1,44 @@
 <?php
-// Configuración de conexión a MySQL
 $host = "localhost";
 $usuario = "root";
-$contrasena = ""; // Cambiar si tu MySQL tiene contraseña
+$contrasena = "";
 $base_datos = "sensor_placas";
 
-// Crear conexión
 $conn = new mysqli($host, $usuario, $contrasena, $base_datos);
+if ($conn->connect_error) { die("❌ Error de conexión: " . $conn->connect_error); }
 
-// Verificar conexión
-if ($conn->connect_error) {
-    die("❌ Error de conexión: " . $conn->connect_error);
-}
-
-// Obtener datos del ESP32 (por GET)
+// Recibir datos del ESP32 (sin modelo)
 $evento     = isset($_GET['evento']) ? $_GET['evento'] : '';
 $fecha_hora = isset($_GET['fecha_hora']) ? $_GET['fecha_hora'] : '';
 $sensor_id  = isset($_GET['sensor_id']) ? intval($_GET['sensor_id']) : 0;
 $ubicacion  = isset($_GET['ubicacion']) ? $_GET['ubicacion'] : '';
-$modelo     = isset($_GET['modelo']) ? $_GET['modelo'] : ''; // 👈 Nuevo campo
 
-// Validar que no estén vacíos
-if ($evento && $fecha_hora && $sensor_id && $ubicacion && $modelo) {
-    // Insertar en la base de datos (incluyendo modelo)
-    $sql = "INSERT INTO lecturas (evento, fecha_hora, sensor_id, ubicacion, modelo)
-            VALUES ('$evento', '$fecha_hora', $sensor_id, '$ubicacion', '$modelo')";
+// Validar parámetros obligatorios
+if ($evento && $fecha_hora && $sensor_id && $ubicacion) {
 
-    if ($conn->query($sql) === TRUE) {
-        echo "✅ Lectura registrada correctamente.";
+    // Obtener el modelo actual desde la tabla configuracion
+    $resultado = $conn->query("SELECT modelo FROM configuracion WHERE id=1");
+    $modelo = "";
+    if ($resultado->num_rows > 0) {
+        $fila = $resultado->fetch_assoc();
+        $modelo = $fila['modelo'];
     } else {
-        echo "❌ Error SQL: " . $conn->error;
+        echo "⚠️ No se encontró un modelo configurado.";
+        exit;
     }
+
+    // Insertar en la base de datos
+    $stmt = $conn->prepare("INSERT INTO lecturas (evento, fecha_hora, sensor_id, ubicacion, modelo) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssiss", $evento, $fecha_hora, $sensor_id, $ubicacion, $modelo);
+
+    if ($stmt->execute()) {
+        echo "✅ Lectura registrada correctamente con modelo: $modelo";
+    } else {
+        echo "❌ Error SQL: " . $stmt->error;
+    }
+
+    $stmt->close();
+
 } else {
     echo "⚠️ Faltan parámetros en la solicitud.";
 }
