@@ -8,7 +8,7 @@ $conn = new mysqli($host, $usuario, $contrasena, $base_datos);
 if ($conn->connect_error) {
     die("❌ Error de conexión: " . $conn->connect_error);
 }
-
+//TEST
 // Leer el modelo actual y su fecha/hora de inicio
 $resultado = $conn->query("SELECT modelo, inicio_modelo FROM configuracion WHERE id=1");
 $modeloActual = "";
